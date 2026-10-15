@@ -1,0 +1,20 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+.output/
+.nuxt/
+
+# 运行时数据（含文章数据库 db.json 与上传图片，不入库）
+backend/data/
+
+# 环境变量（生产密钥请通过平台环境变量/仓库 Variables 注入）
+.env
+.env.*
+!.env.example
+
+# 日志与系统文件
+*.log
+.DS_Store
+Thumbs.db

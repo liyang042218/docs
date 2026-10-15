@@ -1,0 +1,69 @@
+name: Deploy blog to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时刻只允许一次部署
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Generate static site (nuxt generate)
+        working-directory: ./frontend
+        env:
+          # 项目站点自动使用 /<仓库名>/；
+          # 用户站点（<user>.github.io）或自定义域名自动使用 /；
+          # 也可在仓库 Settings → Secrets and variables → Actions → Variables
+          # 中新建 SITE_BASE 手动覆盖，例如 /blog/ 或 /
+          NUXT_APP_BASE_URL: >-
+            ${{ vars.SITE_BASE ||
+              (github.event.repository.name == format('{0}.github.io', github.repository_owner)
+                && '/'
+                || format('/{0}/', github.event.repository.name)) }}
+          # 必填：在仓库 Variables 中配置后端 API 的公网地址
+          # 例如 https://api.example.com（不要加 /api 后缀，不要带结尾斜杠）
+          NUXT_PUBLIC_API_BASE: ${{ vars.NUXT_PUBLIC_API_BASE }}
+        run: npm run generate
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./frontend/.output/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

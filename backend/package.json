@@ -1,0 +1,40 @@
+{
+  "name": "docs-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:server": "tsx watch server/index.ts",
+    "dev:admin": "vite",
+    "dev": "concurrently -n server,admin -c yellow,cyan \"npm:dev:server\" \"npm:dev:admin\"",
+    "build": "vite build",
+    "start": "tsx server/index.ts"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "concurrently": "^9.1.2",
+    "cors": "^2.8.5",
+    "element-plus": "^2.9.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "md-editor-v3": "^5.4.2",
+    "multer": "^2.0.1",
+    "pinia": "^2.3.0",
+    "tsx": "^4.19.2",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.10.2",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.5"
+  }
+}
